@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Gamer(models.Model):
+class Player(models.Model):
     steam_id = models.IntegerField(verbose_name='SteamID', db_index=True,
                                    unique=True)
     dayzname = models.CharField(max_length=255, verbose_name='DayZ nickname')
@@ -27,7 +27,7 @@ class Car(models.Model):
 
 class Event(models.Model):
     action_time = models.DateTimeField(verbose_name='Action time')
-    gamer = models.ForeignKey(Gamer, on_delete=models.CASCADE,
-                              verbose_name='Gamer')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE,
+                              verbose_name='Player')
     car = models.ForeignKey(Car, on_delete=models.PROTECT, verbose_name='Car')
     action = models.CharField(max_length=255, verbose_name='Action')
