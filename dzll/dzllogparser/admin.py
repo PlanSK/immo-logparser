@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from dzllogparser.models import Car, Gamer, Event
+
+admin.site.register(Car)
+admin.site.register(Gamer)
+admin.site.register(Event)
