@@ -7,9 +7,6 @@ from dataclasses import dataclass
 from enum import Enum
 
 
-FILE = 'ImmobilizerLog(2023_3_4_21_0).log'
-TIMESTAMP_STR = '1677952821'
-
 INIT_TYPE_STR_TRIGGER = 'initialized.'
 DELETE_TYPE_STR_TRIGGER = 'DELETED.'
 
@@ -40,6 +37,12 @@ class Event:
     action: str
     player: Player | None
     car: Car
+
+
+class LogfileData(NamedTuple):
+    players: dict
+    cars: dict
+    events: list
 
 
 def get_player_data(log_string: str) -> Player:
@@ -85,39 +88,33 @@ def get_action_str(log_string: str) -> str:
     return action_str
 
 
-def defenition_input_data(dir_name: str, filename: str) -> list:
+def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
     players = dict()
     cars = dict()
     events = []
-    file_path = os.path.join(os.getcwd(), filename)
-    with open(file_path, 'r', encoding='utf-8') as file_instance:
-        for number, file_string in enumerate(file_instance):
-            log_string = file_string.strip()
-            player = None
-            try:
-                car = get_car_data(log_string)
-                action_date = get_action_time(dir_name, log_string)
-            except AttributeError:
-                print(f'Line {number} is skipped.')
-                continue
-            cars.update({car.car_id: car})
-            
-            if log_string.endswith(INIT_TYPE_STR_TRIGGER):
-                event_type = EventType.INIT
-                action=INIT_TYPE_STR_TRIGGER
-            elif log_string.endswith(DELETE_TYPE_STR_TRIGGER):
-                event_type = EventType.DELETE
-                action=DELETE_TYPE_STR_TRIGGER
-            else:
-                player = get_player_data(log_string)
-                players.update({player.steam_id: player})
-                event_type = EventType.ACTION
-                action = get_action_str(log_string)
-            events.append(Event(
-                event_type=event_type, event_date=action_date,
-                action=action, player=player, car=car))
-    return [players, cars, events]
-
-
-if __name__ == '__main__':
-    print(defenition_input_data(dir_name=TIMESTAMP_STR, filename=FILE))
+    for number, file_string in enumerate(file_strings):
+        log_string = file_string.strip()
+        player = None
+        try:
+            car = get_car_data(log_string)
+            action_date = get_action_time(dir_name, log_string)
+        except AttributeError:
+            print(f'Line {number} is skipped.')
+            continue
+        cars.update({car.car_id: car})
+        
+        if log_string.endswith(INIT_TYPE_STR_TRIGGER):
+            event_type = EventType.INIT
+            action=INIT_TYPE_STR_TRIGGER
+        elif log_string.endswith(DELETE_TYPE_STR_TRIGGER):
+            event_type = EventType.DELETE
+            action=DELETE_TYPE_STR_TRIGGER
+        else:
+            player = get_player_data(log_string)
+            players.update({player.steam_id: player})
+            event_type = EventType.ACTION
+            action = get_action_str(log_string)
+        events.append(Event(
+            event_type=event_type, event_date=action_date,
+            action=action, player=player, car=car))
+    return LogfileData(players=players, cars=cars, events=events)
