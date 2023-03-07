@@ -1,6 +1,7 @@
 import ftplib
 import os
-import sys
+from typing import Generator
+from parser import defenition_logfile_data
 
 
 FTP_HOST = os.getenv('FTP_HOST')
@@ -27,8 +28,8 @@ def get_unparsed_dirs_from_ftp(ftp: ftplib.FTP) -> list[str]:
     return unparsed_dirs_list
 
 
-def get_logfile_from_ftp(dir_name: str, ftp: ftplib.FTP) -> bytes:
-    """Returns car logfile from ftp server"""
+def get_logfile_from_ftp(dir_name: str, ftp: ftplib.FTP) -> list[str]:
+    """Returns list with car logfile strings from ftp server"""
     try:
         ftp.cwd(dir_name)
         logfiles_list = [
@@ -39,33 +40,39 @@ def get_logfile_from_ftp(dir_name: str, ftp: ftplib.FTP) -> bytes:
         data = []
         ftp.retrbinary('RETR ' + logfile_name,
                        callback=lambda x: data.append(x))
-        logfile = b''.join(data)
         ftp.cwd('..')
+        logfile = b''.join(data)
     except ftplib.all_errors:
         pass # log this
     except ValueError:
         pass # log this (too many or not enough values in list)
     else:
-        return logfile
+        return logfile.decode('utf-8').split('\r\n')
+    # default return
 
 
-def ftp_connect_and_parse():
+def get_logfiles_generator(ftp: ftplib.FTP) -> Generator[tuple[str, list],
+                                                         None, None]:
+    """Returns Generator with tuples(directory_name, bytes)"""
+    directory_list = get_unparsed_dirs_from_ftp(ftp)
+    logfiles = (
+        (dir_name, get_logfile_from_ftp(dir_name, ftp))
+        for dir_name in directory_list
+    )
+    return logfiles
+
+
+if __name__ == '__main__':
     ftp = ftplib.FTP(FTP_HOST)
     log_list = []
     try:
         ftp.connect()
         ftp.login(FTP_LOGIN, FTP_PASSWORD)
-        directory_list = get_unparsed_dirs_from_ftp(ftp)
-        for dir_name in directory_list:
-            log_list.append(get_logfile_from_ftp(dir_name, ftp))
+        for dir_name, file_strings in get_logfiles_generator(ftp):
+            logfile_data = defenition_logfile_data(dir_name, file_strings)
+            print(logfile_data)
+            # import data to db
     except ftplib.all_errors:
         pass #log this
     finally:
         ftp.close()
-
-    return log_list
-
-
-if __name__ == '__main__':
-    dirs_list = ftp_connect_and_parse()
-    print(sys.getsizeof(dirs_list))
