@@ -72,6 +72,8 @@ if __name__ == '__main__':
             logfile_data = defenition_logfile_data(dir_name, file_strings)
             print(logfile_data)
             # import data to db
+            with open(IGNOREFILE, 'a') as ignorefile:
+                ignorefile.write(dir_name + '\n')
     except ftplib.all_errors:
         pass #log this
     finally:
