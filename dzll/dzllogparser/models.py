@@ -23,14 +23,15 @@ class Car(models.Model):
         max_length=10, choices=CarStatus.choices,
         default=CarStatus.LINKED, verbose_name='Car Status'
     )
-    last_linit_time = models.DateTimeField(verbose_name='Last init time')
+    last_init_time = models.DateTimeField(verbose_name='Last init time',
+                                          blank=True, null=True)
     deletion_time = models.DateTimeField(verbose_name='Deletion time',
-                                         blank=True)
+                                         blank=True, null=True)
 
 
 class Event(models.Model):
     action_time = models.DateTimeField(verbose_name='Action time')
     player = models.ForeignKey(Player, on_delete=models.CASCADE,
-                              verbose_name='Player')
+                              verbose_name='Player', blank=True, null=True)
     car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Car')
     action = models.CharField(max_length=255, verbose_name='Action')
