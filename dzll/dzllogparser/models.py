@@ -23,6 +23,9 @@ class Car(models.Model):
         max_length=10, choices=CarStatus.choices,
         default=CarStatus.LINKED, verbose_name='Car Status'
     )
+    last_linit_time = models.DateTimeField(verbose_name='Last init time')
+    deletion_time = models.DateTimeField(verbose_name='Deletion time',
+                                         blank=True)
 
 
 class Event(models.Model):
