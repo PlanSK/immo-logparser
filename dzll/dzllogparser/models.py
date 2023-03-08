@@ -32,5 +32,5 @@ class Event(models.Model):
     action_time = models.DateTimeField(verbose_name='Action time')
     player = models.ForeignKey(Player, on_delete=models.CASCADE,
                               verbose_name='Player')
-    car = models.ForeignKey(Car, on_delete=models.PROTECT, verbose_name='Car')
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Car')
     action = models.CharField(max_length=255, verbose_name='Action')
