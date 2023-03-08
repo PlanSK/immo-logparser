@@ -1,8 +1,9 @@
 import ftplib
 import os
 from typing import Generator
-from parser import defenition_logfile_data
 
+from dzllogparser.services.parser import defenition_logfile_data
+from dzllogparser.services.db import import_logfile_data_into_db
 
 FTP_HOST = os.getenv('FTP_HOST')
 FTP_LOGIN = os.getenv('FTP_LOGIN')
@@ -62,7 +63,8 @@ def get_logfiles_generator(ftp: ftplib.FTP) -> Generator[tuple[str, list],
     return logfiles
 
 
-if __name__ == '__main__':
+def get_ftp_data() -> None:
+    """Get logfiles data from ftp server."""
     ftp = ftplib.FTP(FTP_HOST)
     log_list = []
     try:
@@ -70,11 +72,15 @@ if __name__ == '__main__':
         ftp.login(FTP_LOGIN, FTP_PASSWORD)
         for dir_name, file_strings in get_logfiles_generator(ftp):
             logfile_data = defenition_logfile_data(dir_name, file_strings)
-            print(logfile_data)
-            # import data to db
+            import_logfile_data_into_db(logfile_data) # import data to db
+
             with open(IGNOREFILE, 'a') as ignorefile:
                 ignorefile.write(dir_name + '\n')
     except ftplib.all_errors:
         pass #log this
     finally:
         ftp.close()
+
+
+if __name__ == '__main__':
+    get_ftp_data()
