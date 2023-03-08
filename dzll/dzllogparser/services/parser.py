@@ -1,6 +1,5 @@
 import datetime
 import re
-import os
 
 from typing import NamedTuple
 from dataclasses import dataclass
@@ -9,6 +8,7 @@ from enum import Enum
 
 INIT_TYPE_STR_TRIGGER = 'initialized.'
 DELETE_TYPE_STR_TRIGGER = 'DELETED.'
+
 
 @dataclass
 class Car:
@@ -38,7 +38,7 @@ class Event:
     event_date: datetime.datetime
     action: str
     player: Player | None
-    car: Car
+    car_id: int
 
 
 class LogfileData(NamedTuple):
@@ -51,7 +51,8 @@ def get_player_data(log_string: str) -> Player:
     """Returns Player dataclass with parsed data."""
     player_data_string = re.search(
         r'Player\{.*\.\d{6}\}\s', log_string).group(0)
-    steam_id = re.search(r'(?<=steam:)[0-9]{17}', player_data_string).group(0)
+    steam_id = int(re.search(r'(?<=steam:)[0-9]{17}',
+                             player_data_string).group(0))
     name = re.search(r'(?<=name:)(.*)(?=\ssteam:)',
                      player_data_string).group(0)
     return Player(
@@ -67,7 +68,7 @@ def get_car_data(log_string: str) -> Car:
     name = re.search(
         r'(?<=\<name=\()(.*)(?=\)\stype=)', car_data_string).group(0)
     car_type = re.search(r'(?<=type=)(.*)(?=\sid=)', car_data_string).group(0)
-    car_id = re.search(r'(?<=id=)\d*', car_data_string).group(0)
+    car_id = int(re.search(r'(?<=id=)\d*', car_data_string).group(0))
     position = re.search(
         r'(?<=pos=)(\d*\.\d{6}\s){3}', car_data_string).group(0).rstrip()
     status = re.search(r'(?<=status=\[).*(?=\])', car_data_string).group(0)
@@ -84,8 +85,10 @@ def get_action_time(directory_name: str,
         r'^([0-1]?[0-9]|2[0-3]):[0-5]?[0-9]:[0-5]?[0-9]', action_str).group(0)
     action_time = datetime.datetime.strptime(
         current_time_string, '%H:%M:%S').time()
-    
-    return datetime.datetime.combine(current_date, action_time)
+    return datetime.datetime.combine(
+        current_date, action_time, tzinfo=datetime.timezone(
+            offset=datetime.timedelta(hours=3))
+    )
 
 
 def get_action_str(log_string: str) -> str:
@@ -111,6 +114,9 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
         except AttributeError:
             print(f'Line {number} is skipped.')
             continue
+        exists_record = cars.get(car.car_id)
+        if exists_record:
+                car.last_init_time = exists_record.last_init_time
         cars.update({car.car_id: car})
         if log_string.endswith(INIT_TYPE_STR_TRIGGER):
             car.last_init_time = action_time
@@ -131,5 +137,5 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
             action = get_action_str(log_string)
         events.append(Event(
             event_type=event_type, event_date=action_time,
-            action=action, player=player, car=car))
+            action=action, player=player, car_id=car.car_id))
     return LogfileData(players=players, cars=cars, events=events)
