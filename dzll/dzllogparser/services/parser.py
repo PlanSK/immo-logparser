@@ -1,9 +1,13 @@
 import datetime
+import logging
 import re
 
 from typing import NamedTuple
 from dataclasses import dataclass
 from enum import Enum
+
+
+parser_logger = logging.getLogger(__name__)
 
 
 INIT_TYPE_STR_TRIGGER = 'initialized.'
@@ -112,7 +116,7 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
             car = get_car_data(log_string)
             action_time = get_action_time(dir_name, log_string)
         except AttributeError:
-            print(f'Line {number} is skipped.')
+            parser_logger.info(f'Line {number} is skipped.')
             continue
         exists_record = cars.get(car.car_id)
         if exists_record:

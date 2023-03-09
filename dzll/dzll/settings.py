@@ -124,3 +124,42 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CAR_LOGFILE_PREFIX='ImmobilizerLog'
+LOGLEVEL = os.environ.get('LOGLEVEL', default='WARNING')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} : {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': LOGLEVEL,
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': LOGLEVEL,
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django_debug.log'),
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'root': {
+            'handlers': ['file'],
+            'level': LOGLEVEL,
+            'propagate': True,
+        },
+    },
+}
+
+FTP_HOST = os.environ.get('FTP_HOST')
+FTP_LOGIN = os.environ.get('FTP_LOGIN')
+FTP_PASSWORD = os.environ.get('FTP_PASSWORD')
+
+CAR_LOGFILE_PREFIX = 'ImmobilizerLog'
+IGNOREFILE = 'ignore_dirs.log'

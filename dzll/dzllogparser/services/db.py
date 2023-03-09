@@ -1,9 +1,13 @@
 import datetime
+import logging
 
 from django.utils import timezone
 
 from dzllogparser.models import Car, Player, Event
 from dzllogparser.services.parser import LogfileData
+
+
+db_logger = logging.getLogger(__name__)
 
 
 def import_logfile_data_into_db(logfile_data: LogfileData):
