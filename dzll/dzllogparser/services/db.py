@@ -40,8 +40,9 @@ def import_players_into_db(players: dict) -> tuple[int, int]:
     for player_record in existing_records_in_db:
         current_player = players.get(player_record.steam_id)
         if player_record.dayzname != current_player:
-            player_record.dayzname = player.name
-            player_record.dayz_alt_names = ', '.join(player.alter_names)
+            player_record.dayzname = current_player.name
+            player_record.dayz_alt_names = ', '.join(
+                current_player.alter_names)
             records_for_update.append(player_record)
         else:
             continue
