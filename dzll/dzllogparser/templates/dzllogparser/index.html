@@ -1,12 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Index Page</title>
-</head>
-<body>
-  Index View is here!
-</body>
-</html>
+{% extends 'dzllogparser/base.html' %}
+{% load static %}
+
+{% block body %}
+<body class="bg-dark text-light h-100">
+    <div class="container h-100">
+        <div class="row h-100 align-items-center justify-content-md-center">
+            <div class="col-md-12">
+                <div class="text-center">
+                    <img class="mb-5" src="{% static 'dzllogparser/img/logo.png' %}" alt="" height="100">
+                    <br>
+                    Search by SteamID
+                    <br>
+                    Search by CarID
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
