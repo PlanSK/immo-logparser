@@ -1,0 +1,29 @@
+{% extends 'dzllogparser/logined_page.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col col-md-6 border rounded m-2">
+        <h5 class="text-center">Car data</h5>
+        Car name: <b>{{ object.name }}</b><br>
+        Car type: <b>{{ object.car_type }}</b><br>
+        Last position: <b>{{ object.position }}</b><br>
+        Status: <b>{{ object.get_car_status_display }}</b><br>
+        {% if object.last_init_time %}
+        Init time: <b>{{ object.last_init_time }}</b><br>
+        {% endif %}
+        {% if object.deletion_time %}
+        Deleted: <b>{{ object.deletion_time }}</b><br>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col col-md-6 border rounded m-2">
+        Car last actions...
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
