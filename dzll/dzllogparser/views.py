@@ -9,7 +9,7 @@ from django.views.generic import TemplateView, RedirectView, DetailView
 from django.urls import reverse_lazy
 
 from dzllogparser.services.ftp import get_ftp_data
-from dzllogparser.models import Player, Car
+from dzllogparser.models import Player, Car, Event
 
 
 class LoginUserView(LoginView):
@@ -30,6 +30,15 @@ class PlayerView(LoginRequiredMixin, DetailView):
         steam_id = self.kwargs.get('steam_id')
         return get_object_or_404(Player, steam_id=steam_id)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        last_actions = Event.objects.filter(player=self.object).select_related(
+            'car', 'player').order_by('-action_time')[:10]
+        context.update({
+            'last_actions': last_actions
+        })
+        return context
+
 
 class CarView(LoginRequiredMixin, DetailView):
     template_name = 'dzllogparser/car_view.html'
@@ -38,6 +47,15 @@ class CarView(LoginRequiredMixin, DetailView):
     def get_object(self):
         car_id = self.kwargs.get('car_id')
         return get_object_or_404(Car, car_id=car_id)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        last_actions = Event.objects.filter(car=self.object).select_related(
+            'car', 'player').order_by('-action_time')[:10]
+        context.update({
+            'last_actions': last_actions
+        })
+        return context
 
 
 class UpdateDbView(LoginRequiredMixin, RedirectView):
