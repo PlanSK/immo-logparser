@@ -7,8 +7,8 @@
     <div class="row justify-content-center">
       <div class="col col-md-6 border rounded m-2">
         <h5 class="text-center">Car data</h5>
-        Car name: <b>{{ object.name }}</b><br>
-        Car type: <b>{{ object.car_type }}</b><br>
+        Car name: <b>{{ object.name }} ({{ object.car_type }})</b><br>
+        Car ID: <b>{{ object.car_id }}</b><br>
         Last position: <b>{{ object.position }}</b><br>
         Status: <b>{{ object.get_car_status_display }}</b><br>
         {% if object.last_init_time %}

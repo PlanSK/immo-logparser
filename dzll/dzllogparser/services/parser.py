@@ -130,6 +130,7 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
             event_type = EventType.DELETE
             action=DELETE_TYPE_STR_TRIGGER
             car.deletion_time = action_time
+            car.status = 'DELETED'
         else:
             player = get_player_data(log_string)
             db_player = players.get(player.steam_id)
