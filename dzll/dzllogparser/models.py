@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse_lazy
 
 
 class Player(models.Model):
@@ -8,6 +9,10 @@ class Player(models.Model):
     dayz_alt_names = models.TextField(verbose_name='Alternate names',
                                       blank=True)
 
+
+    def get_absolute_url(self):
+        return reverse_lazy('player_by_steam_id',
+                            kwargs={'steam_id': self.steam_id})
 
 class Car(models.Model):
     class CarStatus(models.TextChoices):
@@ -27,6 +32,10 @@ class Car(models.Model):
                                           blank=True, null=True)
     deletion_time = models.DateTimeField(verbose_name='Deletion time',
                                          blank=True, null=True)
+
+    def get_absolute_url(self):
+        return reverse_lazy('car_by_id',
+                            kwargs={'car_id': self.car_id})
 
 
 class Event(models.Model):
