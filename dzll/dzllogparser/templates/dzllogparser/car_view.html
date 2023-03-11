@@ -12,10 +12,10 @@
         Last position: <b>{{ object.position }}</b><br>
         Status: <b>{{ object.get_car_status_display }}</b><br>
         {% if object.last_init_time %}
-        Init time: <b>{{ object.last_init_time }}</b><br>
+        Init time: <b>{{ object.last_init_time|date:"d.m.Y H:i:s" }}</b><br>
         {% endif %}
         {% if object.deletion_time %}
-        Deleted: <b>{{ object.deletion_time }}</b><br>
+        Deleted: <b>{{ object.deletion_time|date:"d.m.Y H:i:s" }}</b><br>
         {% endif %}
       </div>
     </div>
@@ -24,8 +24,8 @@
         <ul class="list-group">
           {% for action in last_actions %}
           <li class="list-group-item">
-            {{action.action_time|date:"d.m.Y H:i:s"}} <b>{{action.player.dayzname}} ({{action.player.steam_id}})</b> {{
-            action.action }}
+            {{action.action_time|date:"d.m.Y H:i:s"}} <a href="{{action.player.get_absolute_url}}" class="link-secondary"><b>{{action.player.dayzname}} ({{action.player.steam_id}})</b></a> 
+            {{action.action }}
           </li>
           {% endfor %}
         </ul>

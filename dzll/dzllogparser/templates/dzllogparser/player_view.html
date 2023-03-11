@@ -19,8 +19,8 @@
         <ul class="list-group">
           {% for action in last_actions %}
           <li class="list-group-item">
-            {{action.action_time|date:"d.m.Y H:i:s"}} <b>{{object.dayzname}} ({{object.steam_id}})</b> {{ action.action
-            }} <b>{{action.car.name}} ({{action.car.car_id}})</b>
+            {{action.action_time|date:"d.m.Y H:i:s"}} <b>{{object.dayzname}} ({{object.steam_id}})</b> 
+            {{ action.action }} <a href="{{action.car.get_absolute_url}}" class="link-secondary"><b>{{action.car.name}} ({{action.car.car_id}})</b></a>
           </li>
           {% endfor %}
         </ul>
