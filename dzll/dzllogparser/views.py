@@ -100,10 +100,15 @@ class SearchCarByIDView(LoginRequiredMixin, RedirectView):
 
 
 class SearchByNickname(LoginRequiredMixin, TitleMixin, TemplateView):
-    template_name = 'dzllogparser/index.html'
+    template_name = 'dzllogparser/players_found.html'
     title = 'Search by nickname'
 
     def post(self, request):
-        car_id = request.POST.get('car_id')
-        car_object = get_object_or_404(Car, car_id=car_id)
-        return redirect(car_object)
+        nickname = request.POST.get('nickname')
+        players_with_nickname = Player.objects.filter(
+            dayzname__icontains=nickname)
+        context = {
+            'players_with_nickname': players_with_nickname,
+            'title': self.title,
+        }
+        return super(TemplateView, self).render_to_response(context)

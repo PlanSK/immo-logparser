@@ -16,7 +16,7 @@
           </div>
         </form>
         <h5 class="text-center">Search by Nickname</h5>
-        <form method="post">
+        <form method="post" action="{% url 'search_by_nickname' %}">
           {% csrf_token %}
           <div class="input-group m-1">
             <input type="text" class="form-control" placeholder="Nickname" aria-label="Nickname"

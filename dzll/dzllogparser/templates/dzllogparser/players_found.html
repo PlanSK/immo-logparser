@@ -1,0 +1,28 @@
+{% extends 'dzllogparser/logined_page.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col col-md-6 border rounded m-2">
+        {% if players_with_nickname %}
+        <h5 class="text-center">Founded players</h5>
+        <ul class="list-group m-1">
+          {% for player in players_with_nickname %}
+          <li class="list-group-item">
+            <a href="{{player.get_absolute_url}}" class="link-primary">{{player.dayzname}} ({{player.steam_id}})</a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <h5 class="text-center">Nothing found.</h5>
+        {% endif %}
+        <p class="text-center">
+          <a href="{% url 'index' %}" class="btn btn-secondary btn-sm">Go to index</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
