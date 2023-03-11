@@ -17,7 +17,7 @@
     <div class="row justify-content-center">
       <div class="col col-md-8 border rounded m-1 p-1">
         <ul class="list-group">
-          {% for action in last_actions %}
+          {% for action in last_actions.object_list %}
           <li class="list-group-item">
             <b>{{action.action_time|date:"d.m.Y H:i:s"}}</b>
             {% if action.player == object %}
@@ -31,6 +31,33 @@
         </ul>
       </div>
     </div>
+    {% if num_pages > 1 %}
+    <ul class="pagination pagination-sm justify-content-center mt-1">
+      {% if last_actions.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{last_actions.previous_page_number}}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {% endif %}
+      {% for page_number in paginated_range %}
+      {% if page_number == current_page %}
+      <li class="page-item active" aria-current="page">
+        <span class="page-link">{{page_number}}</span>
+      </li>
+      {% else %}
+      <li class="page-item"><a class="page-link" href="?page={{page_number}}">{{page_number}}</a></li>
+      {% endif %}
+      {% endfor %}
+      {% if last_actions.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{last_actions.next_page_number}}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+    {% endif %}
   </div>
 </main>
 {% endblock %}
