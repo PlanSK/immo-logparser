@@ -3,11 +3,12 @@ from django.urls import path, include
 
 from dzllogparser.views import (
      IndexView, LoginUserView, PlayerView, CarView, SearchPlayerBySteamIDView,
-     SearchCarByIDView, SearchByNickname, UpdateDbView)
+     SearchCarByIDView, SearchByNickname, UpdateDbView, logout_user)
 
 
 urlpatterns = [
     path('login/', LoginUserView.as_view(), name='login'),
+    path('logout/', logout_user, name='logout'),
     path('', IndexView.as_view(), name='index'),
     path('player_by_steamid/<int:steam_id>/', PlayerView.as_view(),
          name='player_by_steam_id'),

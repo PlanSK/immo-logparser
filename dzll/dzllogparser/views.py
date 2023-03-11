@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.contrib.auth import logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -112,3 +113,8 @@ class SearchByNickname(LoginRequiredMixin, TitleMixin, TemplateView):
             'title': self.title,
         }
         return super(TemplateView, self).render_to_response(context)
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
