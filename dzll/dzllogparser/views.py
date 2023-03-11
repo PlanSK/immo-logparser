@@ -33,7 +33,7 @@ class PlayerView(LoginRequiredMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         last_actions = Event.objects.filter(player=self.object).select_related(
-            'car', 'player').order_by('-action_time')[:10]
+            'car', 'player').order_by('action_time')
         context.update({
             'last_actions': last_actions
         })
@@ -51,7 +51,7 @@ class CarView(LoginRequiredMixin, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         last_actions = Event.objects.filter(car=self.object).select_related(
-            'car', 'player').order_by('-action_time')[:10]
+            'car', 'player').order_by('action_time')
         context.update({
             'last_actions': last_actions
         })

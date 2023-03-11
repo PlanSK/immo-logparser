@@ -15,11 +15,16 @@
       </div>
     </div>
     <div class="row justify-content-center">
-      <div class="col col-md-6 border rounded m-1 p-1">
+      <div class="col col-md-8 border rounded m-1 p-1">
         <ul class="list-group">
           {% for action in last_actions %}
           <li class="list-group-item">
-            {{action.action_time|date:"d.m.Y H:i:s"}} <b>{{object.dayzname}} ({{object.steam_id}})</b> 
+            <b>{{action.action_time|date:"d.m.Y H:i:s"}}</b>
+            {% if action.player == object %}
+            {{action.player.dayzname}} ({{action.player.steam_id}})
+            {% else %}
+            <a href="{{action.player.get_absolute_url}}" class="link-primary"><b>{{action.player.dayzname}} ({{action.player.steam_id}})</b></a>
+            {% endif %}
             {{ action.action }} <a href="{{action.car.get_absolute_url}}" class="link-secondary"><b>{{action.car.name}} ({{action.car.car_id}})</b></a>
           </li>
           {% endfor %}
