@@ -73,8 +73,9 @@ def get_car_data(log_string: str) -> Car:
         r'(?<=\<name=\()(.*)(?=\)\stype=)', car_data_string).group(0)
     car_type = re.search(r'(?<=type=)(.*)(?=\sid=)', car_data_string).group(0)
     car_id = int(re.search(r'(?<=id=)\d*', car_data_string).group(0))
-    position = re.search(
-        r'(?<=pos=)(\d*\.\d{6}\s){3}', car_data_string).group(0).rstrip()
+    position_list = re.search(r'(?<=pos=)(\d*\.\d{6}\s){3}',
+                              car_data_string).group(0).rstrip().split()
+    position = ', '.join(position_list)
     status = re.search(r'(?<=status=\[).*(?=\])', car_data_string).group(0)
     return Car(car_id=car_id, name=name, car_type=car_type, position=position,
                status=status, last_init_time=None, deletion_time=None)
