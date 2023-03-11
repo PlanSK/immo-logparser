@@ -2,21 +2,23 @@
 {% load static %}
 
 {% block body %}
+
 <body class="bg-dark text-white font-italic">
   <header>
     <div class="container">
       <nav class="navbar navbar-expand navbar-dark bg-dark border-bottom p-0">
         <div class="container-fluid">
           <a class="navbar-brand" href="{% url 'index' %}">
-            <img src="{% static 'dzllogparser/img/logo.png' %}" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+            <img src="{% static 'dzllogparser/img/logo.png' %}" height="30" class="d-inline-block align-top" alt=""
+              loading="lazy">
           </a>
         </div>
       </nav>
     </div>
   </header>
 
-{% block content %}
-{% endblock %}
+  {% block content %}
+  {% endblock %}
 
   <footer>
     <div class="container position-relative bottom-0">

@@ -22,11 +22,12 @@
     <div class="row justify-content-center">
       <div class="col col-md-6 border rounded m-1 p-1">
         <ul class="list-group">
-        {% for action in last_actions %}
-            <li class="list-group-item">
-                {{action.action_time|date:"d.m.Y H:i:s"}} <b>{{action.player.dayzname}} ({{action.player.steam_id}})</b> {{ action.action }}
-            </li>
-        {% endfor %}
+          {% for action in last_actions %}
+          <li class="list-group-item">
+            {{action.action_time|date:"d.m.Y H:i:s"}} <b>{{action.player.dayzname}} ({{action.player.steam_id}})</b> {{
+            action.action }}
+          </li>
+          {% endfor %}
         </ul>
       </div>
     </div>

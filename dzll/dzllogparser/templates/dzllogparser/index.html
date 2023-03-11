@@ -10,7 +10,8 @@
         <form method="post" action="{% url 'search_by_steam_id' %}">
           {% csrf_token %}
           <div class="input-group m-1">
-            <input type="text" class="form-control" placeholder="SteamID" aria-label="SteamID" aria-describedby="button-addon2" name="steam_id">
+            <input type="text" class="form-control" placeholder="SteamID" aria-label="SteamID"
+              aria-describedby="button-addon2" name="steam_id">
             <button class="btn btn-outline-secondary" type="submit">Search</button>
           </div>
         </form>
@@ -18,7 +19,8 @@
         <form method="post">
           {% csrf_token %}
           <div class="input-group m-1">
-            <input type="text" class="form-control" placeholder="Nickname" aria-label="Nickname" aria-describedby="button-addon2" name="nickname">
+            <input type="text" class="form-control" placeholder="Nickname" aria-label="Nickname"
+              aria-describedby="button-addon2" name="nickname">
             <button class="btn btn-outline-secondary" type="submit">Search</button>
           </div>
         </form>
@@ -28,7 +30,8 @@
         <form method="post" action="{% url 'search_by_car_id' %}">
           {% csrf_token %}
           <div class="input-group m-1">
-            <input type="text" class="form-control" placeholder="CarID" aria-label="CarID" aria-describedby="button-addon2" name="car_id">
+            <input type="text" class="form-control" placeholder="CarID" aria-label="CarID"
+              aria-describedby="button-addon2" name="car_id">
             <button class="btn btn-outline-secondary" type="submit">Search</button>
           </div>
         </form>
