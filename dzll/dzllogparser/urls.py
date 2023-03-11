@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from dzllogparser.views import (IndexView, LoginUserView, PlayerView, CarView, 
-                                SearchPlayerBySteamIDView, SearchCarByIDView)
+from dzllogparser.views import (
+     IndexView, LoginUserView, PlayerView, CarView, SearchPlayerBySteamIDView,
+     SearchCarByIDView, UpdateDbView)
 
 
 urlpatterns = [
@@ -15,5 +16,5 @@ urlpatterns = [
          name='search_by_steam_id'),
     path('search_by_car_id', SearchCarByIDView.as_view(),
          name='search_by_car_id'),
-    path('update/', IndexView.as_view(), name='update_db'),
+    path('update/', UpdateDbView.as_view(), name='update_db'),
 ]
