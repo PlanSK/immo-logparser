@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'dzllogparser.apps.DzllogparserConfig'
 ]
 
@@ -164,3 +166,9 @@ FTP_PASSWORD = os.environ.get('FTP_PASSWORD')
 
 CAR_LOGFILE_PREFIX = 'ImmobilizerLog'
 IGNOREFILE = 'ignore_dirs.log'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'

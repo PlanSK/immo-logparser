@@ -1,20 +1,39 @@
-{% extends 'dzllogparser/base.html' %}
+{% extends 'dzllogparser/logined_page.html' %}
 {% load static %}
 
-{% block body %}
-<body class="bg-dark text-light h-100">
-    <div class="container h-100">
-        <div class="row h-100 align-items-center justify-content-md-center">
-            <div class="col-md-12">
-                <div class="text-center">
-                    <img class="mb-5" src="{% static 'dzllogparser/img/logo.png' %}" alt="" height="100">
-                    <br>
-                    Search by SteamID
-                    <br>
-                    Search by CarID
-                    </div>
-                </div>
-            </div>
-        </div>
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col col-md-6 border rounded m-2">
+        <h5 class="text-center">Search by SteamID</h5>
+        <form method="post" action="{% url 'search_by_steam_id' %}">
+          {% csrf_token %}
+          <div class="input-group m-1">
+            <input type="text" class="form-control" placeholder="SteamID" aria-label="SteamID" aria-describedby="button-addon2" name="steam_id">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+          </div>
+        </form>
+        <h5 class="text-center">Search by Nickname</h5>
+        <form method="post">
+          {% csrf_token %}
+          <div class="input-group m-1">
+            <input type="text" class="form-control" placeholder="Nickname" aria-label="Nickname" aria-describedby="button-addon2" name="nickname">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+          </div>
+        </form>
+      </div>
+      <div class="col col-md-6 border rounded m-2">
+        <h5 class="text-center">Search by CarID</h5>
+        <form method="post" action="{% url 'search_by_car_id' %}">
+          {% csrf_token %}
+          <div class="input-group m-1">
+            <input type="text" class="form-control" placeholder="CarID" aria-label="CarID" aria-describedby="button-addon2" name="car_id">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
+</main>
 {% endblock %}
