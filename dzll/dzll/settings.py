@@ -150,6 +150,12 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR, 'django_debug.log'),
             'formatter': 'verbose',
         },
+        'db_log_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'db.log'),
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'root': {
@@ -157,6 +163,10 @@ LOGGING = {
             'level': LOGLEVEL,
             'propagate': True,
         },
+        'dzllogparser.services.db': {
+            'handlers': ['db_log_file'],
+            'level': LOGLEVEL,
+        }
     },
 }
 
@@ -166,6 +176,7 @@ FTP_PASSWORD = os.environ.get('FTP_PASSWORD')
 
 CAR_LOGFILE_PREFIX = 'ImmobilizerLog'
 IGNOREFILE = 'ignore_dirs.log'
+DAYS_LIMIT = 60
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
