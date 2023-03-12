@@ -31,16 +31,16 @@ def import_logfile_data_into_db(logfile_data: LogfileData,
     player_created_records, player_updated_players = import_players_into_db(
         logfile_data.players)
     db_logger.info(
-        f'Player records created: {player_created_records}.'
-        f'{player_updated_players} player records has been updated.'
+        f'Player records created: {player_created_records}. '
+        f'Player records updated: {player_updated_players}. '
     )
     (car_created_records, car_updated_records,
             car_deleted_records) = import_cars_into_db(logfile_data.cars,
                                                        days_limit)
     db_logger.info(
         f'Car records created: {car_created_records}. '
-        f'{car_updated_records} car records has been updated. '
-        f'{car_deleted_records} old records has been deleted.'
+        f'Car records updated: {car_updated_records}. '
+        f'Old records has been deleted: {car_deleted_records}. '
     )
     events_record_result = import_events_into_db(logfile_data.events)
     db_logger.info(
@@ -140,10 +140,10 @@ def import_cars_into_db(cars: dict,
         batch_size=500
     )
     if days_limit:
-        last_1_month_datetime = timezone.now() - datetime.timedelta(
+        limit_datetime = timezone.now() - datetime.timedelta(
             days=days_limit)
         deleted_records, _ = Car.objects.filter(
-            deletion_time__lt=last_1_month_datetime).delete()
+            deletion_time__lt=limit_datetime).delete()
     else:
         deleted_records = 0
     return (len(created_records), updated_records, deleted_records)
@@ -158,5 +158,5 @@ def import_events_into_db(events_list: list) -> int:
               car=Car.objects.get(car_id=event.car_id),
               action=event.action)
         for event in events_list
-    ], batch_size=1000)
+    ], batch_size=950)
     return len(created_records)
