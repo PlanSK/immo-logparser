@@ -5,14 +5,16 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import TemplateView, RedirectView, DetailView
+from django.views.generic import TemplateView, RedirectView, DetailView, View
 from django.urls import reverse_lazy
 
-from dzllogparser.services.ftp import get_ftp_data
+from dzllogparser.services.ftp import get_updates_from_ftp
 from dzllogparser.models import Player, Car, Event
 from dzllogparser.mixins import TitleMixin
+
 
 class LoginUserView(LoginView):
     template_name = 'dzllogparser/login.html'
@@ -23,6 +25,15 @@ class LoginUserView(LoginView):
 class IndexView(LoginRequiredMixin, TitleMixin, TemplateView):
     template_name = 'dzllogparser/index.html'
     title = 'Index'
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context.update({
+            'players_number': Player.objects.all().count(),
+            'cars_number': Car.objects.all().count(),
+            'events_number': Event.objects.all().count(),
+        })
+        return context
 
 
 class PlayerView(LoginRequiredMixin, TitleMixin, DetailView):
@@ -78,12 +89,19 @@ class CarView(LoginRequiredMixin, TitleMixin, DetailView):
         return context
 
 
-class UpdateDbView(LoginRequiredMixin, RedirectView):
-    pattern_name = 'index'
-
-    def get_redirect_url(self, *args, **kwargs):
-        get_ftp_data()
-        return super().get_redirect_url(*args, **kwargs)
+class UpdateDbView(LoginRequiredMixin, View):
+    """Manual update db view"""
+    def get(self, request, *args, **kwargs):
+        records_status = get_updates_from_ftp()
+        return HttpResponse(
+            f'Player: created {records_status.players_created}, '
+            f'updated {records_status.players_updated}. '
+            f'Car created {records_status.car_created}, '
+            f'updated {records_status.car_updated}, '
+            f'deleted {records_status.car_deleted}. '
+            f'Events created: {records_status.events_created}. '
+            f'Eplased time: {records_status.elapsed_time}s.'
+        )
 
 
 class SearchPlayerBySteamIDView(LoginRequiredMixin, RedirectView):
@@ -106,10 +124,11 @@ class SearchByNickname(LoginRequiredMixin, TitleMixin, TemplateView):
 
     def post(self, request):
         nickname = request.POST.get('nickname')
-        players_with_nickname = Player.objects.filter(
-            dayzname__icontains=nickname)
+        founded_players = Player.objects.filter(
+            Q(dayzname__icontains=nickname) | \
+                Q(dayz_alt_names__icontains=nickname))
         context = {
-            'players_with_nickname': players_with_nickname,
+            'players_with_nickname': founded_players,
             'title': self.title,
         }
         return super(TemplateView, self).render_to_response(context)
