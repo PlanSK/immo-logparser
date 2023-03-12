@@ -77,13 +77,28 @@ class CarView(LoginRequiredMixin, TitleMixin, DetailView):
             'car', 'player').order_by('-action_time')
 
         paginated_actions = Paginator(last_actions, 15)
-        page_number = self.request.GET.get('page', 1)
+        page_number = int(self.request.GET.get('page', 1))
         actions_list = paginated_actions.page(page_number)
+        if paginated_actions.num_pages > 40:
+            if page_number < 20:
+                page_range = range(1, 41)
+            else:
+                if page_number - 18 <= 0:
+                    start_range = 1
+                else:
+                    start_range = page_number - 18
+                if page_number + 20 > paginated_actions.num_pages:
+                    page_range = range(start_range,
+                                       paginated_actions.num_pages + 1)
+                else:
+                    page_range = range(start_range, page_number + 21)
+        else:
+            page_range = paginated_actions.page_range
 
         context.update({
             'last_actions': actions_list,
             'current_page': int(page_number),
-            'paginated_range': paginated_actions.page_range,
+            'paginated_range': page_range,
             'num_pages': paginated_actions.num_pages
         })
         return context
