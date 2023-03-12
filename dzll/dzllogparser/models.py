@@ -9,10 +9,13 @@ class Player(models.Model):
     dayz_alt_names = models.TextField(verbose_name='Alternate names',
                                       blank=True)
 
-
     def get_absolute_url(self):
         return reverse_lazy('player_by_steam_id',
                             kwargs={'steam_id': self.steam_id})
+
+    def __str__(self):
+        return f'{self.dayzname} ({self.steam_id})'
+
 
 class Car(models.Model):
     class CarStatus(models.TextChoices):
@@ -36,6 +39,9 @@ class Car(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('car_by_id',
                             kwargs={'car_id': self.car_id})
+
+    def __str__(self):
+        return f'{self.name} ({self.car_id})'
 
 
 class Event(models.Model):
