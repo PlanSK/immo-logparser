@@ -21,3 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('dzllogparser.urls')),
 ]
+
+handler404 = 'dzllogparser.views.page_not_found'
+handler403 = 'dzllogparser.views.page_forbidden'
+handler500 = 'dzllogparser.views.page_server_error'

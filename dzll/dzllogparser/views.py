@@ -118,3 +118,26 @@ class SearchByNickname(LoginRequiredMixin, TitleMixin, TemplateView):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+
+def page_not_found(request, exception):
+    response = render(request, 'dzllogparser/404.html',
+                      {'title': 'Page not found'})
+    response.status_code = 404
+    return response
+
+
+def page_forbidden(request, exception):
+    response = render(
+        request, 'dzllogparser/403.html', {'title': 'Access forbidden'}
+    )
+    response.status_code = 403
+    return response
+
+
+def page_server_error(request):
+    response = render(
+        request, 'dzllogparser/500.html', {'title': 'Internal Server Error'}
+    )
+    response.status_code = 500
+    return response
