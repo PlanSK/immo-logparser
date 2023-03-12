@@ -35,7 +35,7 @@ def get_unparsed_dirs_from_ftp(ftp: ftplib.FTP) -> list[str]:
 def get_logfile_from_ftp(dir_name: str, ftp: ftplib.FTP) -> list[str]:
     """Returns list with car logfile strings from ftp server"""
     try:
-        ftp.cwd(dir_name)
+        ftp.cwd('/' + dir_name)
         logfiles_list = [
             filename for filename in ftp.nlst()
             if filename.find(settings.CAR_LOGFILE_PREFIX) >= 0
@@ -44,7 +44,6 @@ def get_logfile_from_ftp(dir_name: str, ftp: ftplib.FTP) -> list[str]:
         data = []
         ftp.retrbinary('RETR ' + logfile_name,
                        callback=lambda x: data.append(x))
-        ftp.cwd('..')
         logfile = b''.join(data)
     except ftplib.all_errors as exception:
         ftp_logger.error(f'FTP Error: {exception}.')

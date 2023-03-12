@@ -156,7 +156,7 @@ def import_events_into_db(events_list: list) -> int:
               player=Player.objects.get(steam_id=event.player.steam_id) \
                   if event.player else None,
               car=Car.objects.get(car_id=event.car_id),
-              action=event.action)
+              action=event.action, position=event.position)
         for event in events_list
     ], batch_size=950)
     return len(created_records)
