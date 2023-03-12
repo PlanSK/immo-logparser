@@ -16,7 +16,7 @@ DELETE_TYPE_STR_TRIGGER = 'DELETED.'
 
 @dataclass
 class Car:
-    car_id: int
+    car_id: str
     name: str
     car_type: str
     position: str
@@ -26,7 +26,7 @@ class Car:
 
 @dataclass
 class Player:
-    steam_id: int
+    steam_id: str
     name: str
     alter_names: set
 
@@ -43,6 +43,7 @@ class Event:
     action: str
     player: Player | None
     car_id: int
+    position: str | None
 
 
 class LogfileData(NamedTuple):
@@ -55,8 +56,7 @@ def get_player_data(log_string: str) -> Player:
     """Returns Player dataclass with parsed data."""
     player_data_string = re.search(
         r'Player\{.*\.\d{6}\}\s', log_string).group(0)
-    steam_id = int(re.search(r'(?<=steam:)[0-9]{17}',
-                             player_data_string).group(0))
+    steam_id = re.search(r'(?<=steam:)[0-9]{17}', player_data_string).group(0)
     name = re.search(r'(?<=name:)(.*)(?=\ssteam:)',
                      player_data_string).group(0)
     return Player(
@@ -72,7 +72,7 @@ def get_car_data(log_string: str) -> Car:
     name = re.search(
         r'(?<=\<name=\()(.*)(?=\)\stype=)', car_data_string).group(0)
     car_type = re.search(r'(?<=type=)(.*)(?=\sid=)', car_data_string).group(0)
-    car_id = int(re.search(r'(?<=id=)\d*', car_data_string).group(0))
+    car_id = re.search(r'(?<=id=)\d*', car_data_string).group(0)
     position_list = re.search(r'(?<=pos=)(\d*\.\d{6}\s){3}',
                               car_data_string).group(0).rstrip().split()
     position = ', '.join(position_list)
@@ -84,7 +84,7 @@ def get_car_data(log_string: str) -> Car:
 def get_date_from_timestamp_str(timestamp: str) -> datetime.date:
     """Returns date from timestamp string"""
     current_timestamp = float(timestamp)
-    current_date = datetime.date.fromtimestamp(current_timestamp)
+    current_date = datetime.datetime.utcfromtimestamp(current_timestamp).date()
     return current_date
 
 
@@ -148,6 +148,6 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
             event_type = EventType.ACTION
             action = get_action_str(log_string)
         events.append(Event(
-            event_type=event_type, event_time=action_time,
-            action=action, player=player, car_id=car.car_id))
+            event_type=event_type, event_time=action_time, action=action,
+            player=player, car_id=car.car_id, position=car.position))
     return LogfileData(players=players, cars=cars, events=events)
