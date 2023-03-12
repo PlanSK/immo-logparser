@@ -1,5 +1,8 @@
 import datetime
 import logging
+import time
+
+from dataclasses import dataclass
 
 from django.utils import timezone
 
@@ -10,10 +13,50 @@ from dzllogparser.services.parser import LogfileData
 db_logger = logging.getLogger(__name__)
 
 
-def import_logfile_data_into_db(logfile_data: LogfileData):
-    player_record_result = import_players_into_db(logfile_data.players)
-    car_record_result = import_cars_into_db(logfile_data.cars)
+@dataclass
+class RecordsStatus:
+    players_created: int = 0
+    players_updated: int = 0
+    car_created: int = 0
+    car_updated: int = 0
+    car_deleted: int = 0
+    events_created: int = 0
+    elapsed_time: float = 0.0
+
+
+def import_logfile_data_into_db(logfile_data: LogfileData,
+                                days_limit: int = 0) -> RecordsStatus:
+    """Calls functions to load data into db"""
+    start_time = time.monotonic()
+    player_created_records, player_updated_players = import_players_into_db(
+        logfile_data.players)
+    db_logger.info(
+        f'Player records created: {player_created_records}.'
+        f'{player_updated_players} player records has been updated.'
+    )
+    (car_created_records, car_updated_records,
+            car_deleted_records) = import_cars_into_db(logfile_data.cars,
+                                                       days_limit)
+    db_logger.info(
+        f'Car records created: {car_created_records}. '
+        f'{car_updated_records} car records has been updated. '
+        f'{car_deleted_records} old records has been deleted.'
+    )
     events_record_result = import_events_into_db(logfile_data.events)
+    db_logger.info(
+        f'Event records created: {events_record_result}.'
+    )
+    elapsed_time = time.monotonic() - start_time
+    db_logger.info(f'Eplased time: {elapsed_time}.')
+    return RecordsStatus(
+        players_created=player_created_records,
+        players_updated=player_updated_players,
+        car_created=car_created_records,
+        car_updated=car_updated_records,
+        car_deleted=car_deleted_records,
+        events_created=events_record_result,
+        elapsed_time=round(elapsed_time, 3)
+    )
 
 
 def import_players_into_db(players: dict) -> tuple[int, int]:
@@ -54,10 +97,11 @@ def import_players_into_db(players: dict) -> tuple[int, int]:
         records_for_update, ['dayzname', 'dayz_alt_names'],
         batch_size=500
     )
-    return (created_records, updated_players)
+    return (len(created_records), updated_players)
 
 
-def import_cars_into_db(cars: dict) -> tuple[int, int, int]:
+def import_cars_into_db(cars: dict,
+                        days_limit: int = 0) -> tuple[int, int, int]:
     """Add new cars into db, updating existing 
     and also deletes old deleted cars records.
     Returns numbers of created, updated and deleted records.
@@ -95,21 +139,24 @@ def import_cars_into_db(cars: dict) -> tuple[int, int, int]:
         ['car_status', 'deletion_time', 'last_init_time', 'position'],
         batch_size=500
     )
-    last_1_month_datetime = timezone.now() - datetime.timedelta(
-        days=30)
-    deleted_records, _ = Car.objects.filter(
-        deletion_time__lt=last_1_month_datetime).delete()
-    return (created_records, updated_records, deleted_records)
+    if days_limit:
+        last_1_month_datetime = timezone.now() - datetime.timedelta(
+            days=days_limit)
+        deleted_records, _ = Car.objects.filter(
+            deletion_time__lt=last_1_month_datetime).delete()
+    else:
+        deleted_records = 0
+    return (len(created_records), updated_records, deleted_records)
 
 
 def import_events_into_db(events_list: list) -> int:
     """Add new events into db, and returns number of created records"""
     created_records = Event.objects.bulk_create([
-        Event(action_time=event.event_date,
+        Event(action_time=event.event_time,
               player=Player.objects.get(steam_id=event.player.steam_id) \
                   if event.player else None,
               car=Car.objects.get(car_id=event.car_id),
               action=event.action)
         for event in events_list
     ], batch_size=1000)
-    return created_records
+    return len(created_records)

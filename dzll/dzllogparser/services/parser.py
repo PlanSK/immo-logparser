@@ -39,7 +39,7 @@ class EventType(Enum):
 @dataclass
 class Event:
     event_type: EventType
-    event_date: datetime.datetime
+    event_time: datetime.datetime
     action: str
     player: Player | None
     car_id: int
@@ -81,11 +81,17 @@ def get_car_data(log_string: str) -> Car:
                status=status, last_init_time=None, deletion_time=None)
 
 
+def get_date_from_timestamp_str(timestamp: str) -> datetime.date:
+    """Returns date from timestamp string"""
+    current_timestamp = float(timestamp)
+    current_date = datetime.date.fromtimestamp(current_timestamp)
+    return current_date
+
+
 def get_action_time(directory_name: str,
                            action_str: str) -> datetime.datetime:
     """Returns Action time from timestamp and parsed time."""
-    current_timestamp = float(directory_name)
-    current_date = datetime.date.fromtimestamp(current_timestamp)
+    current_date = get_date_from_timestamp_str(directory_name)
     current_time_string = re.match(
         r'^([0-1]?[0-9]|2[0-3]):[0-5]?[0-9]:[0-5]?[0-9]', action_str).group(0)
     action_time = datetime.datetime.strptime(
@@ -142,6 +148,6 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
             event_type = EventType.ACTION
             action = get_action_str(log_string)
         events.append(Event(
-            event_type=event_type, event_date=action_time,
+            event_type=event_type, event_time=action_time,
             action=action, player=player, car_id=car.car_id))
     return LogfileData(players=players, cars=cars, events=events)
