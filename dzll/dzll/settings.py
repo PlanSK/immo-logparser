@@ -183,7 +183,7 @@ FTP_PASSWORD = os.environ.get('FTP_PASSWORD')
 
 CAR_LOGFILE_PREFIX = 'ImmobilizerLog'
 IGNOREFILE = 'ignore_dirs.log'
-DAYS_LIMIT = os.environ.get('DAYS_LIMIT')
+DAYS_LIMIT = int(os.environ.get('DAYS_LIMIT'))
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
