@@ -37,7 +37,9 @@
         </form>
       </div>
       <p class="text-center">
-        Players: {{players_number}}, Cars: {{cars_number}}, Actions: {{events_number}}.
+        Players: <b>{{players_number}}</b>, Cars: <b>{{cars_number}}</b>, Actions: <b>{{events_number}}</b>,
+        Last action time: <b>{{ last_action_time|date:'d.m.Y H:i' }}</b>.<br>
+        <a href="{% url 'update_db' %}" class="btn btn-outline-secondary mt-1 btn-sm"><i class="fa-solid fa-rotate-right"></i> Update</a>
       </p>
     </div>
   </div>
