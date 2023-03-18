@@ -11,6 +11,7 @@ from django.utils import timezone
 from dzllogparser.services.parser import (defenition_logfile_data,
                                           get_date_from_timestamp_str)
 from dzllogparser.services.db import import_logfile_data_into_db, RecordsStatus
+from dzllogparser.models import Event
 
 
 ftp_logger = logging.getLogger(__name__)
@@ -18,18 +19,23 @@ ftp_logger = logging.getLogger(__name__)
 
 def get_unparsed_dirs_from_ftp(ftp: ftplib.FTP) -> list[str]:
     """Returns unparsed directory list from ftp server"""
-    try:
-        with open(settings.IGNOREFILE, 'r') as file:
-            ignore_dirs_list = [dir_name.strip() for dir_name in file]
-    except FileNotFoundError:
-        ignore_dirs_list = []
-        ftp_logger.info(f'File {settings.IGNOREFILE} is not found.')
-    ftp_directory_list = ftp.nlst()
-    unparsed_dirs_list = [
-        dir_name for dir_name in ftp_directory_list
-        if dir_name.isdigit() and dir_name not in ignore_dirs_list
+    ftp_directory_list = [
+        dir_name for dir_name in ftp.nlst()
+        if dir_name.isdigit()
     ]
-    return unparsed_dirs_list
+    last_event = Event.objects.order_by('action_time').last()
+    try:
+        last_timestamp = int(datetime.datetime.timestamp(
+            last_event.action_time))
+    except AttributeError:
+        ftp_logger.info(f'Last update date not found.')
+        return ftp_directory_list
+    else:
+        unparsed_dirs_list = [
+            dir_name for dir_name in ftp_directory_list
+            if int(dir_name) > last_timestamp
+        ]
+        return unparsed_dirs_list[1:]
 
 
 def get_logfile_from_ftp(dir_name: str, ftp: ftplib.FTP) -> list[str]:
@@ -97,8 +103,6 @@ def get_updates_from_ftp() -> RecordsStatus:
             current_result = import_logfile_data_into_db(logfile_data,
                                                          settings.DAYS_LIMIT)
             get_summary_result(result, current_result)
-            with open(settings.IGNOREFILE, 'a') as ignorefile:
-                ignorefile.write(dir_name + '\n')
     except ftplib.all_errors as exception:
         ftp_logger.error(f'FTP Error: {exception}.')
         # raise

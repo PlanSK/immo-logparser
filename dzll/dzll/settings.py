@@ -133,9 +133,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CAR_LOGFILE_PREFIX='ImmobilizerLog'
 LOGLEVEL = os.environ.get('LOGLEVEL', default='WARNING')
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -182,7 +180,6 @@ FTP_LOGIN = os.environ.get('FTP_LOGIN')
 FTP_PASSWORD = os.environ.get('FTP_PASSWORD')
 
 CAR_LOGFILE_PREFIX = 'ImmobilizerLog'
-IGNOREFILE = 'ignore_dirs.log'
 DAYS_LIMIT = int(os.environ.get('DAYS_LIMIT'))
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
