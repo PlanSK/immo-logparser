@@ -78,12 +78,12 @@ WSGI_APPLICATION = 'dzll.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('ENGINE'),
-        'NAME': os.environ.get('NAME'),
-        'HOST': os.environ.get('HOST'),
-        'USER': os.environ.get('USER'),
-        'PASSWORD': os.environ.get('PASSWORD'),
-        'PORT': os.environ.get('PORT'),
+        'ENGINE': os.environ.get('DBENGINE'),
+        'NAME': os.environ.get('DBNAME'),
+        'HOST': os.environ.get('DBHOST'),
+        'USER': os.environ.get('DBUSER'),
+        'PASSWORD': os.environ.get('DBPASSWORD'),
+        'PORT': os.environ.get('DBPORT'),
         'OPTIONS': {
             'sql_mode': 'traditional',
         },

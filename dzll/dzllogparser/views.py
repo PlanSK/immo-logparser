@@ -28,7 +28,10 @@ class IndexView(LoginRequiredMixin, TitleMixin, TemplateView):
     
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        last_action_time = Event.objects.last().action_time
+        try:
+            last_action_time = Event.objects.last().action_time
+        except AttributeError:
+            last_action_time = None
         context.update({
             'players_number': Player.objects.all().count(),
             'cars_number': Car.objects.all().count(),
