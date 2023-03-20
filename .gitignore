@@ -167,3 +167,5 @@ media/
 mediafiles/
 .db
 .secrets/
+*.conf
+docker-compose.yml
