@@ -169,3 +169,4 @@ mediafiles/
 .secrets/
 *.conf
 docker-compose.yml
+dhparam/
