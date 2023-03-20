@@ -187,3 +187,12 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+
+if os.environ.get('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS = [
+        'https://' + addr 
+        for addr in os.environ['CSRF_TRUSTED_ORIGINS'].split(',')
+    ]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
