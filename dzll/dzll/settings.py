@@ -170,7 +170,7 @@ LOGGING = {
         },
         'dzllogparser.services.db': {
             'handlers': ['db_log_file'],
-            'level': LOGLEVEL,
+            'level': 'INFO',
         }
     },
 }
