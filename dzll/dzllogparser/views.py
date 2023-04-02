@@ -124,7 +124,7 @@ class CarView(LoginRequiredMixin, TitleMixin, DetailView):
         return context
 
 
-class UpdateDbView(LoginRequiredMixin, View):
+class UpdateDbView(View):
     """Manual update db view"""
     def get(self, request, *args, **kwargs):
         records_status = get_updates_from_ftp()
