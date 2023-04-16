@@ -36,6 +36,8 @@ class Car(models.Model):
                                           blank=True, null=True)
     deletion_time = models.DateTimeField(verbose_name='Deletion time',
                                          blank=True, null=True)
+    last_using_time = models.DateTimeField(verbose_name='Last using time',
+                                         blank=True, null=True)
 
     def get_absolute_url(self):
         return reverse_lazy('car_by_id',
