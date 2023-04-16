@@ -1,0 +1,25 @@
+{% extends 'dzllogparser/logined_page.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col col-md-12 border rounded m-2" style="font-size: 0.8rem;">
+        <h5 class="text-center">Vehicle theft cases</h5>
+        <ul class="list-group mb-1">
+          {% for action in object_list %}
+          <li class="list-group-item">
+            {{action.action_time|date:"d.m.Y H:i:s"}}
+            <a href="{{action.player.get_absolute_url}}" class="link-secondary"><b>{{action.player.dayzname}}
+                ({{action.player.steam_id}})</b></a>
+            {{action.action}} 
+            <a href="{{action.car.get_absolute_url}}" class="link-secondary">{{action.car}}</a> ({{action.position}})
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

@@ -3,7 +3,8 @@ from django.urls import path, include
 
 from dzllogparser.views import (
      IndexView, LoginUserView, PlayerView, CarView, SearchPlayerBySteamIDView,
-     SearchCarByIDView, SearchByNickname, UpdateDbView, logout_user)
+     SearchCarByIDView, SearchByNickname, UpdateDbView, logout_user,
+     VehicleTheftCasesView)
 
 
 urlpatterns = [
@@ -17,7 +18,9 @@ urlpatterns = [
          name='search_by_steam_id'),
     path('search_by_car_id/', SearchCarByIDView.as_view(),
          name='search_by_car_id'),
-    path('search_by_nickname', SearchByNickname.as_view(),
+    path('search_by_nickname/', SearchByNickname.as_view(),
          name='search_by_nickname'),
+     path('vehicle_theft_view/', VehicleTheftCasesView.as_view(),
+         name='vehicle_theft_view'),
     path('update/', UpdateDbView.as_view(), name='update_db'),
 ]

@@ -36,6 +36,9 @@
           </div>
         </form>
       </div>
+      <div class="col col-md-6 border rounded m-2 text-center">
+        <a href="{% url 'vehicle_theft_view' %}" class="link-secondary">View vehicle theft cases</a>
+      </div>
       <p class="text-center">
         Players: <b>{{players_number}}</b>, Cars: <b>{{cars_number}}</b>, Actions: <b>{{events_number}}</b>,
         Last action time: <b>{{ last_action_time|date:'d.m.Y H:i'|default:"Undefined" }}</b>.<br>

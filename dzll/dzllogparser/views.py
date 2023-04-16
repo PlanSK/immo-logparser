@@ -8,7 +8,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import TemplateView, RedirectView, DetailView, View
+from django.views.generic import (TemplateView, RedirectView, DetailView,
+                                  View, ListView)
 from django.urls import reverse_lazy
 
 from dzllogparser.services.ftp import get_updates_from_ftp
@@ -167,6 +168,16 @@ class SearchByNickname(LoginRequiredMixin, TitleMixin, TemplateView):
             'title': self.title,
         }
         return super(TemplateView, self).render_to_response(context)
+
+
+class VehicleTheftCasesView(LoginRequiredMixin, TitleMixin, ListView):
+    template_name = 'dzllogparser/vehicle_thefts_view.html'
+    title = 'Vehicle theft cases'
+    model = Event
+    events_type = ('сломал замок', 'неудачная попытка взлома замка')
+    queryset = Event.objects.filter(
+            action__in=events_type).select_related('car', 'player').order_by(
+                '-action_time')
 
 
 def logout_user(request):
