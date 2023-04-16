@@ -142,8 +142,12 @@ def import_cars_into_db(cars: dict,
     if days_limit:
         limit_datetime = timezone.now() - datetime.timedelta(
             days=days_limit)
+        limit_phantom_time = timezone.now() - timezone.timedelta(days=3)
         deleted_records, _ = Car.objects.filter(
             deletion_time__lt=limit_datetime).delete()
+        phantom_records, _ = Car.objects.filter(
+            last_init_time__lt=limit_phantom_time).delete()
+        deleted_records += phantom_records
     else:
         deleted_records = 0
     return (len(created_records), updated_records, deleted_records)
