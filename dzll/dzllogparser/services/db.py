@@ -1,9 +1,9 @@
-import datetime
 import logging
 import time
 
 from dataclasses import dataclass
 
+from django.db.models import Q
 from django.utils import timezone
 
 from dzllogparser.models import Car, Player, Event
@@ -140,14 +140,12 @@ def import_cars_into_db(cars: dict,
         batch_size=500
     )
     if days_limit:
-        limit_datetime = timezone.now() - datetime.timedelta(
+        limit_datetime = timezone.now() - timezone.timedelta(
             days=days_limit)
         limit_phantom_time = timezone.now() - timezone.timedelta(days=3)
         deleted_records, _ = Car.objects.filter(
-            deletion_time__lt=limit_datetime).delete()
-        phantom_records, _ = Car.objects.filter(
-            last_init_time__lt=limit_phantom_time).delete()
-        deleted_records += phantom_records
+            Q(deletion_time__lt=limit_datetime) |
+            Q(last_init_time__lt=limit_phantom_time)).delete()
     else:
         deleted_records = 0
     return (len(created_records), updated_records, deleted_records)
