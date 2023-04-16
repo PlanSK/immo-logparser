@@ -53,3 +53,6 @@ class Event(models.Model):
     action = models.CharField(max_length=255, verbose_name='Action')
     position = models.CharField(max_length=255,
                                            verbose_name='Coordinates')
+
+    def __str__(self) -> str:
+        return f'{self.action_time} {self.player} {self.action}'
