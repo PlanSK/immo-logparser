@@ -10,7 +10,11 @@
         Car name: <b>{{ object.name }} ({{ object.car_type }})</b><br>
         Car ID: <b>{{ object.car_id }}</b><br>
         Last position: <b>{{ object.position }}</b><br>
-        Status: <b>{{ object.get_car_status_display }}</b><br>
+        Status: <b>{{ object.get_car_status_display }}</b>
+        {% if request.user.is_staff %}
+        <a href="{% url 'delete_car' pk=object.pk %}" class="link-scondary">Delete</a>
+        {% endif %}
+        <br>
         {% if object.last_init_time %}
         Init time: <b>{{ object.last_init_time|date:"d.m.Y H:i:s" }}</b><br>
         {% endif %}

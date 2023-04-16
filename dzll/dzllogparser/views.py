@@ -11,6 +11,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (TemplateView, RedirectView, DetailView,
                                   View, ListView)
+from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
 from django.utils import timezone
 
@@ -200,6 +201,12 @@ class VehicleLongUnusedView(LoginRequiredMixin, TitleMixin, ListView):
             'unused_limit': settings.UNSING_DAYS_LIMIT,
         })
         return context
+
+
+class CarDeleteView(DeleteView):
+    model = Car
+    success_url = "/"
+    template_name = "dzllogparser/car_delete_confirm.html"
 
 
 def logout_user(request):
