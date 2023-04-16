@@ -14,6 +14,9 @@
         {% if object.last_init_time %}
         Init time: <b>{{ object.last_init_time|date:"d.m.Y H:i:s" }}</b><br>
         {% endif %}
+        {% if object.last_using_time %}
+        Last using time: <b>{{ object.last_using_time|date:"d.m.Y H:i:s" }}</b><br>
+        {% endif %}
         {% if object.deletion_time %}
         Deleted: <b>{{ object.deletion_time|date:"d.m.Y H:i:s" }}</b><br>
         {% endif %}

@@ -1,0 +1,22 @@
+{% extends 'dzllogparser/logined_page.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col col-md-12 border rounded m-2" style="font-size: 0.8rem;">
+        <h5 class="text-center">Long unusing vehicle list</h5>
+        <p>Unused limit: {{unused_limit}} days</p>
+        <ul class="list-group mb-1">
+          {% for car in object_list %}
+          <li class="list-group-item">
+            {{car.last_using_time|date:"d.m.Y H:i:s"}} <a href="{{car.get_absolute_url}}" class="link-secondary">{{car}}</a> ({{car.position}})
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

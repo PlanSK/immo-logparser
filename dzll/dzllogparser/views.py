@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (TemplateView, RedirectView, DetailView,
                                   View, ListView)
 from django.urls import reverse_lazy
+from django.utils import timezone
 
 from dzllogparser.services.ftp import get_updates_from_ftp
 from dzllogparser.models import Player, Car, Event
@@ -178,6 +180,26 @@ class VehicleTheftCasesView(LoginRequiredMixin, TitleMixin, ListView):
     queryset = Event.objects.filter(
             action__in=events_type).select_related('car', 'player').order_by(
                 '-action_time')
+
+
+class VehicleLongUnusedView(LoginRequiredMixin, TitleMixin, ListView):
+    template_name = 'dzllogparser/unused_vehicle_view.html'
+    title = 'Long unused vehicle list'
+    model = Car
+
+    def get_queryset(self):
+        criteria_time = timezone.now() - timezone.timedelta(
+            days=settings.UNSING_DAYS_LIMIT)
+        unused_cars_queryset = Car.objects.filter(
+            last_using_time__lte=criteria_time).order_by('last_using_time')
+        return unused_cars_queryset
+    
+    def get_context_data(self):
+        context = super().get_context_data()
+        context.update({
+            'unused_limit': settings.UNSING_DAYS_LIMIT,
+        })
+        return context
 
 
 def logout_user(request):

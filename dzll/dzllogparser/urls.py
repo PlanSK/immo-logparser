@@ -4,7 +4,7 @@ from django.urls import path, include
 from dzllogparser.views import (
      IndexView, LoginUserView, PlayerView, CarView, SearchPlayerBySteamIDView,
      SearchCarByIDView, SearchByNickname, UpdateDbView, logout_user,
-     VehicleTheftCasesView)
+     VehicleTheftCasesView, VehicleLongUnusedView)
 
 
 urlpatterns = [
@@ -22,5 +22,7 @@ urlpatterns = [
          name='search_by_nickname'),
      path('vehicle_theft_view/', VehicleTheftCasesView.as_view(),
          name='vehicle_theft_view'),
+     path('vehicle_long_unused/', VehicleLongUnusedView.as_view(),
+         name='vehicle_long_unused'),
     path('update/', UpdateDbView.as_view(), name='update_db'),
 ]
