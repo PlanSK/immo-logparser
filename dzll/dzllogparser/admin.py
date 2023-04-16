@@ -4,7 +4,7 @@ from dzllogparser.models import Car, Player, Event
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('player', 'action', 'car')
+    list_display = ('action_time', 'player', 'action', 'car')
     search_fields = ('player', 'action', 'car')
     list_filter = ('action',)
 
@@ -14,6 +14,6 @@ class CarAdmin(admin.ModelAdmin):
     list_filter = ('car_status',)
 
 
-admin.site.register(Car)
+admin.site.register(Car, CarAdmin)
 admin.site.register(Player)
 admin.site.register(Event, EventAdmin)
