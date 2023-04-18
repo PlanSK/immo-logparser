@@ -23,6 +23,7 @@ class Car:
     status: str
     last_init_time: datetime.datetime | None
     deletion_time: datetime.datetime | None
+    last_use_time: datetime.datetime | None
 
 @dataclass
 class Player:
@@ -75,10 +76,14 @@ def get_car_data(log_string: str) -> Car:
     car_id = re.search(r'(?<=id=)\d*', car_data_string).group(0)
     position_list = re.search(r'(?<=pos=)(\d*\.\d{6}\s){3}',
                               car_data_string).group(0).rstrip().split()
-    position = ', '.join(position_list)
+    rounded_position_list = [
+        position[:-3] for position in position_list
+    ]
+    position = ', '.join(rounded_position_list)
     status = re.search(r'(?<=status=\[).*(?=\])', car_data_string).group(0)
     return Car(car_id=car_id, name=name, car_type=car_type, position=position,
-               status=status, last_init_time=None, deletion_time=None)
+               status=status, last_init_time=None, deletion_time=None,
+               last_use_time=None)
 
 
 def get_date_from_timestamp_str(timestamp: str) -> datetime.date:
@@ -127,7 +132,7 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
             continue
         exists_record = cars.get(car.car_id)
         if exists_record:
-                car.last_init_time = exists_record.last_init_time
+            car.last_init_time = exists_record.last_init_time
         cars.update({car.car_id: car})
         if log_string.endswith(INIT_TYPE_STR_TRIGGER):
             car.last_init_time = action_time
@@ -147,6 +152,7 @@ def defenition_logfile_data(dir_name: str, file_strings: list) -> LogfileData:
             players.update({player.steam_id: player})
             event_type = EventType.ACTION
             action = get_action_str(log_string)
+            car.last_use_time = action_time
         events.append(Event(
             event_type=event_type, event_time=action_time, action=action,
             player=player, car_id=car.car_id, position=car.position))
