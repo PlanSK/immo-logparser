@@ -192,7 +192,8 @@ class VehicleLongUnusedView(LoginRequiredMixin, TitleMixin, ListView):
         criteria_time = timezone.now() - timezone.timedelta(
             days=settings.UNSING_DAYS_LIMIT)
         unused_cars_queryset = Car.objects.filter(
-            last_using_time__lte=criteria_time).order_by('last_using_time')
+            last_using_time__lte=criteria_time).exclude(
+                car_status=Car.CarStatus.DELETED).order_by('last_using_time')
         return unused_cars_queryset
     
     def get_context_data(self):
