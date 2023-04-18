@@ -10,7 +10,8 @@ from django.utils import timezone
 
 from dzllogparser.services.parser import (defenition_logfile_data,
                                           get_date_from_timestamp_str)
-from dzllogparser.services.db import import_logfile_data_into_db, RecordsStatus
+from dzllogparser.services.db import (
+    import_logfile_data_into_db, RecordsStatus, change_status_for_phantoms)
 from dzllogparser.models import Event
 
 
@@ -103,6 +104,7 @@ def get_updates_from_ftp() -> RecordsStatus:
             current_result = import_logfile_data_into_db(logfile_data,
                                                          settings.DAYS_LIMIT)
             get_summary_result(result, current_result)
+        change_status_for_phantoms()
     except ftplib.all_errors as exception:
         ftp_logger.error(f'FTP Error: {exception}.')
         # raise

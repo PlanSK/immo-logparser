@@ -119,7 +119,7 @@ def import_cars_into_db(cars: dict,
     created_records = Car.objects.bulk_create(
         [
             Car(car_id=car.car_id, name=car.name, car_type=car.car_type,
-                position=car.position,car_status=car.status,
+                position=car.position, car_status=car.status,
                 last_init_time=car.last_init_time,
                 deletion_time=car.deletion_time,
                 last_using_time=car.last_use_time)
@@ -135,21 +135,13 @@ def import_cars_into_db(cars: dict,
         car_record.deletion_time = current_car.deletion_time
         car_record.last_init_time = current_car.last_init_time
         car_record.position = current_car.position
+        if current_car.last_use_time:
+            car_record.last_using_time = current_car.last_use_time
     updated_records = Car.objects.bulk_update(
         existing_records_in_db,
         ['car_status', 'deletion_time', 'last_init_time',
          'position', 'last_using_time'],
         batch_size=500
-    )
-    limit_phantom_time = timezone.now() - timezone.timedelta(hours=6)
-    phantom_vehicle_list = Car.objects.filter(
-        last_init_time__lt=limit_phantom_time)
-    for phantom_vehicle in phantom_vehicle_list:
-        phantom_vehicle.car_status='DELETED'
-        phantom_vehicle.deletion_time=phantom_vehicle.last_init_time + \
-            timezone.timedelta(hours=3)
-    Car.objects.bulk_update(
-        phantom_vehicle_list, ['car_status', 'deletion_time'], batch_size=500
     )
     if days_limit:
         limit_datetime = timezone.now() - timezone.timedelta(
@@ -172,3 +164,19 @@ def import_events_into_db(events_list: list) -> int:
         for event in events_list
     ], batch_size=950)
     return len(created_records)
+
+
+def change_status_for_phantoms() -> None:
+    """Change car status to deleted if car not initialized for the last 6 
+    hours
+    """
+    limit_phantom_time = timezone.now() - timezone.timedelta(hours=6)
+    phantom_vehicle_list = Car.objects.filter(
+        last_init_time__lt=limit_phantom_time)
+    for phantom_vehicle in phantom_vehicle_list:
+        phantom_vehicle.car_status='DELETED'
+        phantom_vehicle.deletion_time=phantom_vehicle.last_init_time + \
+            timezone.timedelta(hours=3)
+    Car.objects.bulk_update(
+        phantom_vehicle_list, ['car_status', 'deletion_time'], batch_size=500
+    )
