@@ -172,7 +172,8 @@ def change_status_for_phantoms() -> None:
     """
     limit_phantom_time = timezone.now() - timezone.timedelta(hours=6)
     phantom_vehicle_list = Car.objects.filter(
-        last_init_time__lt=limit_phantom_time)
+        last_init_time__lt=limit_phantom_time).exclude(
+            car_status=Car.CarStatus.DELETED)
     for phantom_vehicle in phantom_vehicle_list:
         phantom_vehicle.car_status='DELETED'
         phantom_vehicle.deletion_time=phantom_vehicle.last_init_time + \
