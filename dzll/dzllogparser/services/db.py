@@ -172,12 +172,16 @@ def change_status_for_phantoms() -> None:
     """
     limit_phantom_time = timezone.now() - timezone.timedelta(hours=6)
     phantom_vehicle_list = Car.objects.filter(
-        last_init_time__lt=limit_phantom_time).exclude(
+        Q(last_init_time__lt=limit_phantom_time) |
+        Q(last_init_time__isnull=True)).exclude(
             car_status=Car.CarStatus.DELETED)
     for phantom_vehicle in phantom_vehicle_list:
         phantom_vehicle.car_status='DELETED'
-        phantom_vehicle.deletion_time=phantom_vehicle.last_init_time + \
-            timezone.timedelta(hours=3)
+        try:
+            phantom_vehicle.deletion_time=phantom_vehicle.last_init_time + \
+                timezone.timedelta(hours=3)
+        except TypeError:
+            pass
     Car.objects.bulk_update(
         phantom_vehicle_list, ['car_status', 'deletion_time'], batch_size=500
     )
