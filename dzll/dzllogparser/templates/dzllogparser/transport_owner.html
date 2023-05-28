@@ -1,0 +1,38 @@
+{% extends 'dzllogparser/logined_page.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col col-md-6 border rounded m-2">
+        <h5 class="text-center">Player data</h5>
+        Player Name: <b>{{ car_owner_data.owner.dayzname }}</b><br>
+        Player SteamID: <b>{{ car_owner_data.owner.steam_id }}</b><br>
+        Player cars used: <b>{{ car_owner_data.car_count }}</b>
+        {% if car_owner_data.owner.dayz_alt_names %}
+        Player alternative names: <b>{{ car_owner_data.owner.dayz_alt_names }}</b><br>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col col-md-6 border rounded m-1 p-1">
+        {% if car_owner_data.car_count %}
+        <ol class="list-group list-group-numbered">
+          {% for car in car_owner_data.cars_list %}
+          <li class="list-group-item">
+            <a href="{{car.get_absolute_url}}" class="link-secondary"><b>{{car.name}} ({{car.car_id}})</b></a>
+          </li>
+          {% endfor %}
+        </ol>
+        {% else %}
+        No data.
+        {% endif %}
+      </div>
+    </div>
+    <p class="text-center">
+      <a href="{% url 'index' %}" class="btn btn-secondary btn-sm">Go to index</a>
+    </p>
+  </div>
+</main>
+{% endblock %}

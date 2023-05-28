@@ -16,6 +16,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 
 from dzllogparser.services.ftp import get_updates_from_ftp
+from dzllogparser.services.db import get_player_cars
 from dzllogparser.models import Player, Car, Event
 from dzllogparser.mixins import TitleMixin
 
@@ -81,7 +82,8 @@ class PlayerView(LoginRequiredMixin, TitleMixin, DetailView):
             'last_actions': actions_list,
             'current_page': int(page_number),
             'paginated_range': page_range,
-            'num_pages': paginated_actions.num_pages
+            'num_pages': paginated_actions.num_pages,
+            'car_owner_data': get_player_cars(self.object.steam_id),
         })
         return context
 
@@ -200,6 +202,19 @@ class VehicleLongUnusedView(LoginRequiredMixin, TitleMixin, ListView):
         context = super().get_context_data()
         context.update({
             'unused_limit': settings.UNSING_DAYS_LIMIT,
+        })
+        return context
+
+
+class TransportOwnersView(LoginRequiredMixin, TitleMixin, TemplateView):
+    title = 'Transport owner view'
+    template_name = 'dzllogparser/transport_owner.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        steam_id = self.kwargs.get('steam_id')
+        context.update({
+            'car_owner_data': get_player_cars(steam_id),
         })
         return context
 

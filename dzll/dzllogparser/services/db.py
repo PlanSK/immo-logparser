@@ -3,7 +3,9 @@ import time
 
 from dataclasses import dataclass
 
-from django.db.models import Q
+from django.conf import settings
+from django.db.models import Q, Count
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from dzllogparser.models import Car, Player, Event
@@ -22,6 +24,13 @@ class RecordsStatus:
     car_deleted: int = 0
     events_created: int = 0
     elapsed_time: float = 0.0
+
+
+@dataclass
+class OwnersCarStat:
+    owner: Player
+    car_count: int
+    cars_list: list[Car]
 
 
 def import_logfile_data_into_db(logfile_data: LogfileData,
@@ -185,3 +194,22 @@ def change_status_for_phantoms() -> None:
     Car.objects.bulk_update(
         phantom_vehicle_list, ['car_status', 'deletion_time'], batch_size=500
     )
+
+
+def get_player_cars(steam_id: str) -> OwnersCarStat:
+    """Returns OwnersCarStat with count of player cars, and cars list"""
+    player = get_object_or_404(Player, steam_id=steam_id)
+    interval = timezone.now() - timezone.timedelta(
+    days=settings.MINIMAL_USED_DAYS_CRITERIA)
+    cars_stat = Event.objects.filter(
+        player=player,
+        action_time__gte=interval
+    ).select_related('car', 'player').values('car').annotate(Count('car'))
+    cars_id_list = [
+        car['car']
+        for car in cars_stat
+        if car['car__count'] > settings.MINIMAL_ENEVT_COUNT_CRITERIA
+    ]
+    cars_list = list(Car.objects.filter(id__in=cars_id_list))
+    return OwnersCarStat(owner=player, car_count=len(cars_list),
+                         cars_list=cars_list)

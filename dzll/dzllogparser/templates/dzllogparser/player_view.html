@@ -9,6 +9,7 @@
         <h5 class="text-center">Player data</h5>
         Player Name: <b>{{ object.dayzname }}</b><br>
         Player SteamID: <b>{{ object.steam_id }}</b><br>
+        Player cars used: <b>{{ car_owner_data.car_count }} <a href="{% url 'transport_owner_view' steam_id=object.steam_id %}">more..</a></b> 
         {% if object.dayz_alt_names %}
         Player alternative names: <b>{{ object.dayz_alt_names }}</b><br>
         {% endif %}
